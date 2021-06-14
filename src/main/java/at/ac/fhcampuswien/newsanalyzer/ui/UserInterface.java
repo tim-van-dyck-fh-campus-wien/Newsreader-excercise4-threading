@@ -2,6 +2,12 @@ package at.ac.fhcampuswien.newsanalyzer.ui;
 
 
 import at.ac.fhcampuswien.newsanalyzer.ctrl.Controller;
+import at.ac.fhcampuswien.newsapi.NewsApi;
+import at.ac.fhcampuswien.newsapi.NewsApiBuilder;
+import at.ac.fhcampuswien.newsapi.enums.Category;
+import at.ac.fhcampuswien.newsapi.enums.Country;
+import at.ac.fhcampuswien.newsapi.enums.Endpoint;
+import at.ac.fhcampuswien.newsapi.enums.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,31 +18,52 @@ public class UserInterface
 	private Controller ctrl = new Controller();
 
 	public void getDataFromCtrl1(){
-		System.out.println("ABC");
-
+		NewsApiBuilder api = new NewsApiBuilder()
+				.setQ("Bitcoin")
+				.setEndPoint(Endpoint.EVERYTHING)
+				.setFrom("2021-06-05");
+		ctrl.setData(api);
 		ctrl.process();
 	}
 
 	public void getDataFromCtrl2(){
-		// TODO implement me
+	NewsApiBuilder api = new NewsApiBuilder()
+			.setQ("Fußball")
+			.setEndPoint(Endpoint.EVERYTHING);
+	ctrl.setData(api);
+	ctrl.process();
+
 	}
 
 	public void getDataFromCtrl3(){
-		// TODO implement me
+		NewsApiBuilder api = new NewsApiBuilder()
+				.setQ("Dogecoin")
+				.setEndPoint(Endpoint.EVERYTHING);
+		ctrl.setData(api);
+		ctrl.process();
 	}
 	
 	public void getDataForCustomInput() {
-		// TODO implement me
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		try{
+			System.out.println("Please enter the topic");
+			String q = reader.readLine();
+			NewsApiBuilder api = new NewsApiBuilder().setQ(q).setEndPoint(Endpoint.EVERYTHING);
+			ctrl.setData(api);
+			ctrl.process();
+		}catch(IOException e){
+			System.out.println(e.getMessage());
+		}
 	}
 
 
 	public void start() {
 		Menu<Runnable> menu = new Menu<>("User Interface");
 		menu.setTitle("Wählen Sie aus:");
-		menu.insert("a", "Choice ABC", this::getDataFromCtrl1);
-		menu.insert("b", "Choice DEF", this::getDataFromCtrl2);
-		menu.insert("c", "Choice 3", this::getDataFromCtrl3);
-		menu.insert("d", "Choice User Input:",this::getDataForCustomInput);
+		menu.insert("a", "Bitcoin News from the past month", this::getDataFromCtrl1);
+		menu.insert("b", "Football news headlines", this::getDataFromCtrl2);
+		menu.insert("c", "Get Dogecoin news", this::getDataFromCtrl3);
+		menu.insert("d", "Search for a topic:",this::getDataForCustomInput);
 		menu.insert("q", "Quit", null);
 		Runnable choice;
 		while ((choice = menu.exec()) != null) {

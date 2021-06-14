@@ -114,15 +114,14 @@ public class NewsApi {
         this.endpoint = endpoint;
     }
 
-    protected String requestData() {
+    protected String requestData()throws NewsApiException {
         String url = buildURL();
         System.out.println("URL: " + url);
         URL obj = null;
         try {
             obj = new URL(url);
         } catch (MalformedURLException e) {
-            // TODO improve ErrorHandling
-            e.printStackTrace();
+            throw new NewsApiException("The generated URL is invalid! Check it's syntax!");
         }
         HttpURLConnection con;
         StringBuilder response = new StringBuilder();
@@ -135,17 +134,21 @@ public class NewsApi {
             }
             in.close();
         } catch (IOException e) {
-            // TODO improve ErrorHandling
-            System.out.println("Error "+e.getMessage());
+            throw new NewsApiException("The Request could not be handled by the API. Try a new request");
         }
         return response.toString();
     }
 
-    protected String buildURL() {
+    protected String buildURL() throws NewsApiException{
         // TODO ErrorHandling
-        String urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
-        StringBuilder sb = new StringBuilder(urlbase);
-
+       String urlbase;
+       StringBuilder sb;
+        try{
+            urlbase = String.format(NEWS_API_URL,getEndpoint().getValue(),getQ(),getApiKey());
+            sb = new StringBuilder(urlbase);
+        }catch(NullPointerException e){
+            throw new NewsApiException("We could not build the URL! Please make sure that the Newsapi URL and parameters were set!");
+        }
         System.out.println(urlbase);
 
         if(getFrom() != null){
@@ -184,7 +187,7 @@ public class NewsApi {
         return sb.toString();
     }
 
-    public NewsResponse getNews() {
+    public NewsResponse getNews() throws NewsApiException{
         NewsResponse newsReponse = null;
         String jsonResponse = requestData();
         if(jsonResponse != null && !jsonResponse.isEmpty()){
@@ -193,13 +196,13 @@ public class NewsApi {
             try {
                 newsReponse = objectMapper.readValue(jsonResponse, NewsResponse.class);
                 if(!"ok".equals(newsReponse.getStatus())){
-                    System.out.println("Error: "+newsReponse.getStatus());
+                   // System.out.println("Error: "+newsReponse.getStatus());
+                    throw new NewsApiException("Your request could not be handled by the API! Try changing your request!");
                 }
             } catch (JsonProcessingException e) {
-                System.out.println("Error: "+e.getMessage());
+                throw new NewsApiException("We could not Process the servers Response!");
             }
         }
-        //TODO improve Errorhandling
         return newsReponse;
     }
 }

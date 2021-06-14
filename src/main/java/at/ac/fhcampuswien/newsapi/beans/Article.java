@@ -85,7 +85,11 @@ public class Article {
 
     @JsonProperty("author")
     public String getAuthor() {
-        return author;
+        if(author!=null){
+            return author;
+        }else{
+            return "AUTHOR UNKNOWN";
+        }
     }
 
     @JsonProperty("author")

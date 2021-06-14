@@ -10,7 +10,7 @@ import java.util.List;
 
 public class NewsAPIExample {
 
-    public static final String APIKEY = "myKey";    //TODO add your api key
+    public static final String APIKEY = "b49d2c8361c14279a17dcf13767377fe";    //TODO add your api key
 
     public static void main(String[] args){
 
@@ -22,26 +22,31 @@ public class NewsAPIExample {
                 .setSourceCategory(Category.health) // example of how to use enums
                 .createNewsApi();
 
-            NewsResponse newsResponse = newsApi.getNews();
-            if(newsResponse != null){
-                List<Article> articles = newsResponse.getArticles();
-                articles.stream().forEach(article -> System.out.println(article.toString()));
+            try{
+                NewsResponse newsResponse = newsApi.getNews();
+                if(newsResponse != null){
+                    List<Article> articles = newsResponse.getArticles();
+                    articles.stream().forEach(article -> System.out.println(article.toString()));
+                }
+
+                newsApi = new NewsApiBuilder()
+                        .setApiKey(APIKEY)
+                        .setQ("corona")
+                        .setEndPoint(Endpoint.EVERYTHING)
+                        .setFrom("2020-03-20")
+                        .setExcludeDomains("Lifehacker.com")
+                        .createNewsApi();
+
+                newsResponse = newsApi.getNews();
+
+                if(newsResponse != null){
+                    List<Article> articles = newsResponse.getArticles();
+                    articles.stream().forEach(article -> System.out.println(article.toString()));
+                }
+            }catch(Exception e){
+
             }
 
-        newsApi = new NewsApiBuilder()
-                .setApiKey(APIKEY)
-                .setQ("corona")
-                .setEndPoint(Endpoint.EVERYTHING)
-                .setFrom("2020-03-20")
-                .setExcludeDomains("Lifehacker.com")
-                .createNewsApi();
-
-            newsResponse = newsApi.getNews();
-
-        if(newsResponse != null){
-            List<Article> articles = newsResponse.getArticles();
-            articles.stream().forEach(article -> System.out.println(article.toString()));
-        }
 
     }
 }
