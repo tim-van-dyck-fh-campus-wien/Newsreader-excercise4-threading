@@ -1,6 +1,8 @@
 package at.ac.fhcampuswien.newsanalyzer.ui;
 
 
+import at.ac.fhcampuswien.downloader.ParallelDownloader;
+import at.ac.fhcampuswien.downloader.SequentialDownloader;
 import at.ac.fhcampuswien.newsanalyzer.ctrl.Controller;
 import at.ac.fhcampuswien.newsapi.NewsApi;
 import at.ac.fhcampuswien.newsapi.NewsApiBuilder;
@@ -55,7 +57,18 @@ public class UserInterface
 			System.out.println(e.getMessage());
 		}
 	}
+	public void downloadLastSearch(){
+		long start = System.currentTimeMillis();
+		ctrl.download(new SequentialDownloader());
+		long end = System.currentTimeMillis();
+		System.out.println("Sequential Download took:"+(end-start) +"ms to execute");
+		start = System.currentTimeMillis();
+		ctrl.download(new ParallelDownloader());
+		end = System.currentTimeMillis();
+		System.out.println("Parallel Download took:"+(end-start) +"ms to execute");
 
+
+	}
 
 	public void start() {
 		Menu<Runnable> menu = new Menu<>("User Interface");
@@ -64,6 +77,7 @@ public class UserInterface
 		menu.insert("b", "Football news headlines", this::getDataFromCtrl2);
 		menu.insert("c", "Get Dogecoin news", this::getDataFromCtrl3);
 		menu.insert("d", "Search for a topic:",this::getDataForCustomInput);
+		menu.insert("e","Download last search",this::downloadLastSearch);
 		menu.insert("q", "Quit", null);
 		Runnable choice;
 		while ((choice = menu.exec()) != null) {

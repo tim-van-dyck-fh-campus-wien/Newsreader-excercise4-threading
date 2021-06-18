@@ -1,0 +1,1 @@
+https://github.com/tim-van-dyck-fh-campus-wien/newsreader.git

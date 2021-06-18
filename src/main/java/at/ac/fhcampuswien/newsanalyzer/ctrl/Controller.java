@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.newsanalyzer.ctrl;
 
+import at.ac.fhcampuswien.downloader.Downloader;
 import at.ac.fhcampuswien.newsapi.NewsApi;
 import at.ac.fhcampuswien.newsapi.NewsApiBuilder;
 import at.ac.fhcampuswien.newsapi.NewsApiException;
@@ -47,6 +48,7 @@ public class Controller {
 
 
 		}
+
 		//TODO implement Error handling
 
 		//TODO load the news based on the parameters
@@ -55,6 +57,20 @@ public class Controller {
 
 
 		System.out.println("End process");
+	}
+	public void download(Downloader downloader){
+		NewsResponse newsResponse;
+		try{
+			newsResponse = newsApi.getNews();
+		}catch(NewsApiException e){
+			System.out.println(e.getMessage());
+			return;
+		}
+		if(newsResponse!=null){
+			List<Article> articles = newsResponse.getArticles();
+			downloader.process(getAllUrlsAsList(articles));
+		}
+
 	}
 	public int getNumberOfArticles(List<Article> articles){
 		return (int)articles.stream().count();
@@ -91,7 +107,9 @@ public class Controller {
 			}).map((article)->article.getTitle())//Just keep the titles...
 			.collect(Collectors.toList());//and collect them to a List of string...
 	}
-	
+	public List<String> getAllUrlsAsList(List<Article> articles){
+		return articles.stream().map(Article::getUrl).collect(Collectors.toList());
+	}
 
 	public Object getData() {
 		
