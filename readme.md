@@ -1,1 +1,1 @@
-https://github.com/tim-van-dyck-fh-campus-wien/newsreader.git
+https://github.com/tim-van-dyck-fh-campus-wien/Newsreader-excercise4-threading
